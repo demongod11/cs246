@@ -1,0 +1,32 @@
+create database lab1;
+use lab1;
+create table course(course_no char(100) primary key, course_title char(100) not null, l int not null, t int not null, p int not null, c int not null, type_of_course char(100) not null);
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/courses.csv' into table course fields terminated by '#' lines terminated by '\n' ignore 1 lines;
+create table course_offered_to (course_no char(100) primary key, type_of_course varchar(1000) not null, offered_to varchar(1000) not null, foreign key(course_no) references course(course_no) on delete cascade on update cascade);
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/courses-offered-to.csv' into table course_offered_to fields terminated by '#' lines terminated by '\n' ignore 1 lines;
+create table course_exam_slot (course_no char(100) primary key, exam_slot varchar(100), exam_date_and_time varchar(100), foreign key(course_no) references course(course_no) on delete cascade on update cascade);
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/courses-exam-slots.csv' into table course_exam_slot fields terminated by '#' lines terminated by '\n' ignore 1 lines;
+create table faculty (faculty_id int primary key, department_name varchar(100) not null, faculty_name varchar(1000) not null);
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/bt.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/ce.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/ch.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/cl.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/cs.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/da.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/dd.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/dm.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/ee.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/en.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/hs.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/ifst.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/ls.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/ma.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/me.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/nt.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/ph.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/ra.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty/rt.csv' into table faculty fields terminated by '#' lines terminated by '\n';
+create table faculty_course_allotment (course_no char(100), department_name varchar(100) not null, faculty_id int, primary key(course_no, faculty_id), foreign key (course_no) references course(course_no) on delete cascade on update cascade, foreign key (faculty_id) references faculty(faculty_id) on delete cascade on update cascade);
+load data local infile 'C:/Users/cchan/Downloads/database-24-jan-2022/database-24-jan-2022/faculty-course-allotment.csv' into table faculty_course_allotment fields terminated by '#' lines terminated by '\n';
+
+-- In task 10 in the file faculty-course-allotment.csv, 430th line is of wrong data type. It should be of data type int but the input is of string. Due to this when we load that file we get 2 warnings and 1 record skip.
