@@ -110,8 +110,8 @@ void Directory::insert(int dat)
                 dir[index]->valid = 1;
                 dir[index]->extra_data.push_back(dat);
                 no_of_valid++;
-                if((double)(no_of_valid)/(double)(ascending.size()) >= (double)(M)/(double)(100)){
 
+                if((no_of_valid)*100 >= M*(ascending.size())){
                     vector <int> presentvalues;
 
                     for(int i=0; i<sz; i++){
@@ -173,15 +173,6 @@ void Directory::insert(int dat)
         dir[index]->insert(dat);
     }
 }
-void Directory::print_bucket(int index)
-{
-
-    for (int i = 0; i < dir[index]->no_of_keys; i++)
-    {
-        cout << (dir[index]->data)[i] << " ";
-    }
-    cout << endl;
-}
 
 bool Directory::isPresent(int dat)
 {
@@ -190,49 +181,6 @@ bool Directory::isPresent(int dat)
     yes = ((dir[dat % sz]->search(dat)) != -1) ? 1 : 0;
 
     return yes;
-}
-
-void Directory::delete_elem(int dat)
-{
-    if (isPresent(dat))
-    {
-        int sz = (1 << global_depth);
-        int ind = dir[dat % sz]->search(dat);
-
-        auto it = (dir[dat%sz]->data).begin() + ind;
-
-        (dir[dat%sz]->data).erase(it);
-        dir[dat%sz]->no_of_keys--;
-        dir[dat%sz]->data.push_back(0);
-
-    }
-
-    // int half_size = (1<<global_depth)/2;
-
-    // for(int i = 0;i<half_size;i++){
-    //     int total_keys = dir[i]->no_of_keys + dir[half_size+i]->no_of_keys;
-    //     if(total_keys <=bucket_capacity){
-    //         for(auto x: dir[half_size + i]->data){
-    //             dir[i]->insert(x);
-    //         }
-    //         dir[half_size+i] = dir[i]; 
-    //         dir[i]->local_depth --;
-    //         dir[i]->no_of_keys = total_keys;
-    //     }
-    // }
-    // set <Bucket*> ss;
-    // for(auto x: dir){
-    //     ss.insert(x);
-    // }
-    // if(ss.size()<=half_size){
-    //     vector<Bucket*> temp_dir(half_size);
-    //     for(int i = 0;i<half_size;i++){
-    //         temp_dir[i] = dir[i];
-    //     }
-    //     dir = temp_dir;
-    //     global_depth--;
-    // }
-
 }
 
 void Directory::display(){
@@ -246,33 +194,6 @@ void Directory::display(){
     }
     cout <<s.size()<<endl;
 
-    // for(auto x: ascending){
-    //     cout << (x->no_of_keys)<<" "<<(x->local_depth)<<endl;
-    // }
-
-}
-void Directory::printDirectory(){
-    int sz = (1<<global_depth);
-    for(int i = 0;i<sz;i++){
-
-        vector <int> binary_rep;
-        for(int j = 0;j<31;j++){
-            if((1<<j)&i){
-                binary_rep.push_back(1);
-            }
-            else{
-                binary_rep.push_back(0);
-            }
-        }
-        for(int j = global_depth-1;j>=0;j--){
-            cout <<binary_rep[j];
-        }
-        cout <<" ";
-        for(int j = 0;j<dir[i]->no_of_keys;j++){
-            cout << dir[i]->data[j]<<" ";
-        }
-        cout << endl;
-    }
 }
 
 int main()
@@ -290,21 +211,6 @@ int main()
             cin >> y;
             d.insert(y);
         }
-        // else if(x == 3){
-        //     int y;
-        //     cin >> y;
-        //     if(d.isPresent(y)){
-        //         cout <<"Present"<<endl;
-        //     }
-        //     else{
-        //         cout <<"Not present"<<endl;
-        //     }
-        // }
-        // else if(x==4){
-        //     int y;
-        //     cin>> y;
-        //     d.delete_elem(y);
-        // }
         else if(x==5){
             d.display();
         }
@@ -312,6 +218,5 @@ int main()
             break;
         }
     }
-    // d.printDirectory();
     return 0;
 }

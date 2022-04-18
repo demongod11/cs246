@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
-#include<stdio.h>
-#include<conio.h>
+#include <stdio.h>
 
 using namespace std;
 
@@ -24,8 +23,7 @@ int main(){
     int m = stoi(n2);
 
     int fdcount;
-
-    int attr[n];
+    vll attr(n);
 
     for(int i=0; i<n; i++){
         attr[i]=i+1;
@@ -45,8 +43,8 @@ int main(){
         getline(cin, s);
         string s1;
         getline(cin, s1);
-        s11.push_back(s);
-        s12.push_back(s1);
+        s11.pb(s);
+        s12.pb(s1);
     }
 
     fdcount = -1;
@@ -165,30 +163,55 @@ int main(){
         }
     }
 
-    cout<<c_key.size()<<endl;
+    set<set<ll>> ans;
 
-    for(int x=1;x<=n;x++){
-        for(auto it:c_key){
-            if(it.size()==x){
-            for(auto itr:it){
-                cout<<itr<<" ";
+    for(ll i=0; i<m; i++){
+        set<ll> temp1;
+        for(ll j=0; j<f[i].lcount; j++){
+            temp1.insert(f[i].left[j]);
+        }
+        
+        bool isBCNF=0;
+
+        ll t;
+        for(auto itr:s_key){
+            t=1;
+            for(auto itr1 : itr)
+            {
+                if(temp1.find(itr1)==temp1.end()){
+                    t=0;
+                    break;
+                }
             }
-            cout<<endl;
+            if(t==1){
+                isBCNF=1;
+                break;
             }
         }
-    }    
+
+        if(isBCNF == 0){
+            set<ll> temp2;
+            for(ll j=0; j<f[i].lcount; j++){
+                temp2.insert(f[i].left[j]);
+            }
+            for(ll j=0; j<f[i].rcount; j++){
+                attr.erase(find(attr.begin(), attr.end(), f[i].right[j]));
+                temp2.insert(f[i].right[j]);
+            }
+            ans.insert(temp2);
+        }
+    }
+
+    for(ll i=0; i<attr.size(); i++){
+        cout << attr[i] << " ";
+    }
+    cout << endl;
+
+    for(auto it:ans){
+        for(auto itr: it){
+            cout << itr << " ";
+        }
+        cout << endl;
+    }
+
 }
-
-// 1. Find the attributes that are neither on the left and right side
-
-// 2. Find attributes that are only on the right side
-
-// 3. Find attributes that are only on the left side
-
-// 4. Combine the attributes on step 1 and 3
-
-// 5. Test if the closures of attributes on step 4 constitutes all the attributes. If yes it is a candidate key.
-
-// 6. If not, find the relation exteriors, that is the attributes not included in step 4 and step 2.
-
-// 7. Now test the closures of attributes on step 4 + one attribute in step 6 one at a time. All those combinations are candidate keys if their closures constitute all the attributes

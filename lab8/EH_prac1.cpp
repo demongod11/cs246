@@ -220,7 +220,6 @@ void Directory::display(){
 
     for(auto x: ascending){
         cout << (x->no_of_keys)<<" "<<(x->local_depth)<<endl;
-      
     }
 
 }

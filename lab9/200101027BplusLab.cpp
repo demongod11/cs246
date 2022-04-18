@@ -155,6 +155,103 @@ void Bplus_tree::insert(int data){
     Bplus_node *curr = root;
     int k;
     while (curr->isDataNode == false){
+        Bplus_node *burr = curr;
+        // If index node equals maximum capacity
+        while (burr->content.size() == (2*t+1)){
+            // Special root case, to be handled after this loop
+            if (burr == root || burr == nullptr){
+                break;
+            }
+            // Split the current index node
+            Bplus_node *right_node = new Bplus_node(); // Create a new index node
+            int value_up = burr->content[t]->data; // The value to be sent to parent after splitting
+            // Split into t,1,t; 1->up to parent
+            for (int i = t + 1; i < burr->content.size(); i++){
+                n = new node();
+                n->data = burr->content[i]->data;
+                n->left = burr->content[i]->left;
+                right_node->content.push_back(n);
+            }
+            // Update all pointers
+            right_node->parent = burr->parent;
+            right_node->right = burr->right;
+            burr->right = burr->content[t]->left; // Left child of the value to be sent to parent
+            // Delete the nodes transfered to new node and parent
+            for (int i = 0; i < t + 1; i++){
+                n = burr->content.back();
+                burr->content.pop_back();
+                delete(n);
+            }
+            // Update parent pointer of children of splitted index node
+            for (int i = 0; i < right_node->content.size(); i++){
+                ((right_node->content[i])->left)->parent = right_node;
+            }
+            (right_node->right)->parent = right_node;
+
+            // Insert the middle value into parent node.
+            n = new node();
+            n->data = value_up;
+            n->left = burr;
+            // If new entry is largest entry of index node, just insert it and update the right child pointer
+            if (n->data > ((burr->parent)->content.back())->data){
+                (burr->parent)->content.push_back(n);
+                (burr->parent)->right = right_node;
+            }
+            // Else we have to update some other pointer
+            else{
+                (burr->parent)->content.push_back(n); // Insert into parent node
+                Bplus_node *burr_parent = burr->parent;
+                sort(burr_parent->content.begin(), burr_parent->content.end(), cmp); // Sort the parent node
+                int j = 0; // Find the location where pointers need to be updated and update it.
+                for (j = 0; j < burr_parent->content.size(); j++){
+                    if (burr_parent->content[j]->data == n->data){
+                        break;
+                    }
+                }
+                burr_parent->content[j + 1]->left = right_node;
+            }
+            burr = burr->parent;
+        }
+        // Now after exiting the loop, current pointer will be pointing to root
+        // If it equals the max capacity, split the root.
+        if (burr == root && burr->content.size() == (2*t+1)){
+            // Create a new index node
+            Bplus_node *right_node = new Bplus_node();
+            int value_up = burr->content[t]->data; // Middle value to be sent to new root.
+            // Split into t,1,t; 1->up to parent
+            for (int i = t+1; i < root->content.size(); i++){
+                n = new node();
+                n->data = root->content[i]->data;
+                n->left = root->content[i]->left;
+                right_node->content.push_back(n);
+            }
+            // Update pointers
+            right_node->right = burr->right;
+            burr->right = (burr->content[t])->left; // Left child of the value to be sent to parent
+            // Delete the nodes transfered to new node and parent
+            for (int i = 0; i < t + 1; i++){
+                n = root->content.back();
+                root->content.pop_back();
+                delete(n);
+            }
+            // Update parent pointer of children of splitted index node
+            for (int i = 0; i < right_node->content.size(); i++){
+                right_node->content[i]->left->parent = right_node;
+            }
+            right_node->right->parent = right_node;
+            // Create a new root
+            Bplus_node *new_root = new Bplus_node();
+            // Insert the value into root
+            n = new node();
+            n->data = value_up;
+            n->left = root;
+            new_root->content.push_back(n);
+            new_root->right = right_node;
+            // Update new root
+            root = new_root;
+            ((root->content[0])->left)->parent = root;
+            (root->right)->parent = root;
+        }
         k = 0;
         for (int i = 0; i < curr->content.size(); i++){
             if (curr->content[i]->data > data){
@@ -217,105 +314,5 @@ void Bplus_tree::insert(int data){
             }
         }
         curr_parent->content[j + 1]->left = right_node;
-    }
-    curr = curr->parent;
-    if (curr == nullptr){
-        return;
-    }
-    // If index node exeecds maximum capacity
-    while (curr->content.size() > (2*t+1)){
-        // Special root case, to be handled after this loop
-        if (curr == root || curr == nullptr){
-            break;
-        }
-        // Split the current index node
-        Bplus_node *right_node = new Bplus_node(); // Create a new index node
-        int value_up = curr->content[t]->data; // The value to be sent to parent after splitting
-        // Split into t,1,t+1; 1->up to parent
-        for (int i = t + 1; i < curr->content.size(); i++){
-            n = new node();
-            n->data = curr->content[i]->data;
-            n->left = curr->content[i]->left;
-            right_node->content.push_back(n);
-        }
-        // Update all pointers
-        right_node->parent = curr->parent;
-        right_node->right = curr->right;
-        curr->right = curr->content[t]->left; // Left child of the value to be sent to parent
-        // Delete the nodes transfered to new node and parent
-        for (int i = 0; i < t + 2; i++){
-            n = curr->content.back();
-            curr->content.pop_back();
-            delete(n);
-        }
-        // Update parent pointer of children of splitted index node
-        for (int i = 0; i < right_node->content.size(); i++){
-            ((right_node->content[i])->left)->parent = right_node;
-        }
-        (right_node->right)->parent = right_node;
-
-        // Insert the middle value into parent node.
-        n = new node();
-        n->data = value_up;
-        n->left = curr;
-        // If new entry is largest entry of index node, just insert it and update the right child pointer
-        if (n->data > ((curr->parent)->content.back())->data){
-            (curr->parent)->content.push_back(n);
-            (curr->parent)->right = right_node;
-        }
-        // Else we have to update some other pointer
-        else{
-            (curr->parent)->content.push_back(n); // Insert into parent node
-            Bplus_node *curr_parent = curr->parent;
-            sort(curr_parent->content.begin(), curr_parent->content.end(), cmp); // Sort the parent node
-            int j = 0; // Find the location where pointers need to be updated and update it.
-            for (j = 0; j < curr_parent->content.size(); j++){
-                if (curr_parent->content[j]->data == n->data){
-                    break;
-                }
-            }
-            curr_parent->content[j + 1]->left = right_node;
-        }
-        curr = curr->parent;
-    }
-    // Now after exiting the loop, current pointer will be pointing to root
-    // If it exeeds the max capacity, split the root.
-    if (curr == root && curr->content.size() > (2*t+1)){
-        // Create a new index node
-        Bplus_node *right_node = new Bplus_node();
-        int value_up = curr->content[t]->data; // Middle value to be sent to new root.
-        // Split into t,1,t+1; 1->up to parent
-        for (int i = t+1; i < root->content.size(); i++){
-            n = new node();
-            n->data = root->content[i]->data;
-            n->left = root->content[i]->left;
-            right_node->content.push_back(n);
-        }
-        // Update pointers
-        right_node->right = curr->right;
-        curr->right = (curr->content[t])->left; // Left child of the value to be sent to parent
-        // Delete the nodes transfered to new node and parent
-        for (int i = 0; i < t + 2; i++){
-            n = root->content.back();
-            root->content.pop_back();
-            delete(n);
-        }
-        // Update parent pointer of children of splitted index node
-        for (int i = 0; i < right_node->content.size(); i++){
-            right_node->content[i]->left->parent = right_node;
-        }
-        right_node->right->parent = right_node;
-        // Create a new root
-        Bplus_node *new_root = new Bplus_node();
-        // Insert the value into root
-        n = new node();
-        n->data = value_up;
-        n->left = root;
-        new_root->content.push_back(n);
-        new_root->right = right_node;
-        // Update new root
-        root = new_root;
-        ((root->content[0])->left)->parent = root;
-        (root->right)->parent = root;
     }
 }

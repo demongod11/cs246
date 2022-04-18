@@ -15,13 +15,14 @@ map<int, Bucket *> bmap;
 int gd, bucket_capacity;
 void display()
 {
-    rep(i, 0, 1 << gd)
-    {
-        cout << "Local depth of the bucket is : " << bmap[i]->ld << "\n";
-        for (auto j : bmap[i]->a)
-            cout << j << " ";
-        cout << "\n";
-    }
+    cout << gd << "\n";
+    // rep(i, 0, 1 << gd)
+    // {
+    //     cout << "Local depth of the bucket is : " << bmap[i]->ld << "\n";
+    //     for (auto j : bmap[i]->a)
+    //         cout << j << " ";
+    //     cout << "\n";
+    // }
 }
 
 int search(int n)
@@ -95,34 +96,34 @@ void insert(int n)
     }
 }
 
-void merge()
-{
-    for (int i = 0; i < (1 << (gd - 1)); i++)
-    {
-        int h = i & ((1 << ((bmap[i]->ld) - 1)) - 1);
-        /*Current and Matched are pair of matching data buckets having ld-1 common suffix*/
-        Bucket *curr = bmap[i];
-        Bucket *matched = bmap[i ^ (1 << (bmap[i]->ld - 1))];
-        if (curr != matched)
-        {
-            int sz = curr->a.size() + matched->a.size();
-            if (sz <= bucket_capacity)
-            {
-                copy(all(matched->a), back_inserter(curr->a));
-                vector<int> inds;
-                for (auto i : bmap)
-                {
-                    if (i.second == matched)
-                        inds.pb(i.first);
-                }
-                delete matched;
-                for (auto j : inds)
-                    bmap[j] = bmap[i];
-                bmap[i]->ld--;
-            }
-        }
-    }
-}
+// void merge()
+// {
+//     for (int i = 0; i < (1 << (gd - 1)); i++)
+//     {
+//         int h = i & ((1 << ((bmap[i]->ld) - 1)) - 1);
+//         /*Current and Matched are pair of matching data buckets having ld-1 common suffix*/
+//         Bucket *curr = bmap[i];
+//         Bucket *matched = bmap[i ^ (1 << (bmap[i]->ld - 1))];
+//         if (curr != matched)
+//         {
+//             int sz = curr->a.size() + matched->a.size();
+//             if (sz <= bucket_capacity)
+//             {
+//                 copy(all(matched->a), back_inserter(curr->a));
+//                 vector<int> inds;
+//                 for (auto i : bmap)
+//                 {
+//                     if (i.second == matched)
+//                         inds.pb(i.first);
+//                 }
+//                 delete matched;
+//                 for (auto j : inds)
+//                     bmap[j] = bmap[i];
+//                 bmap[i]->ld--;
+//             }
+//         }
+//     }
+// }
 
 // void shrink()
 // {
@@ -152,16 +153,16 @@ void del(int n)
                 break;
             }
         }
-        /*Merging the pair of data buckets if possible*/
-        merge();
+        // /*Merging the pair of data buckets if possible*/
+        // merge();
 
-        /*If all the buckets have local depth less than global depth then shrink the directory*/
+        // /*If all the buckets have local depth less than global depth then shrink the directory*/
         // shrink();
 
-        cout << "Number deleted successfully\n";
+        // cout << "Number deleted successfully\n";
     }
     else
-        cout << "Element not found : \n";
+        cout << "Element not found \n";
 }
 void menu()
 {
@@ -169,40 +170,40 @@ void menu()
     int n;
     while (1)
     {
-        cout << "1. Insertion\n";
-        cout << "2. Deletion\n";
-        cout << "3. Display\n";
-        cout << "4. Search\n";
-        cout << "5. Exit\n";
-        cout << "--------------------\n";
-        cout << "Enter your choice : \n";
+        // cout << "1. Insertion\n";
+        // cout << "2. Deletion\n";
+        // cout << "3. Display\n";
+        // cout << "4. Search\n";
+        // cout << "5. Exit\n";
+        // cout << "--------------------\n";
+        // cout << "Enter your choice : \n";
         cin >> choice;
-        cout << "--------------------\n";
+        // cout << "--------------------\n";
         switch (choice)
         {
-        case 1:
-            cout << "Enter the number to be inserted : \n";
+        case 2:
+            // cout << "Enter the number to be inserted : \n";
             cin >> n;
             insert(n);
-            cout << "Number inserted successfully\n";
+            // cout << "Number inserted successfully\n";
             break;
-        case 2:
-            cout << "Enter the number to be deleted : \n";
+        case 4:
+            // cout << "Enter the number to be deleted : \n";
             cin >> n;
             del(n);
             break;
-        case 3:
+        case 5:
             display();
             break;
-        case 4:
-            cout << "Enter the number to be searched : \n";
+        case 3:
+            // cout << "Enter the number to be searched : \n";
             cin >> n;
             if (search(n))
-                cout << "Found\n";
+                // cout << "Found\n";
             else
                 cout << "Not Found\n";
             break;
-        case 5:
+        case 6:
             exit(0);
         default:
             cout << "Invalid choice !";
@@ -211,16 +212,15 @@ void menu()
 }
 int main()
 {
-    cout << "Enter bucket capacity : \n";
-    cin >> bucket_capacity;
+    cin >> gd >> bucket_capacity;
     bmap[0] = new Bucket;
-    insert(45);
-    insert(22);
-    insert(12);
-    insert(11);
-    insert(15);
-    insert(10);
-    display();
-    insert(22);
-    // menu();
+    // insert(45);
+    // insert(22);
+    // insert(12);
+    // insert(11);
+    // insert(15);
+    // insert(10);
+    // display();
+    // insert(22);
+    menu();
 }
