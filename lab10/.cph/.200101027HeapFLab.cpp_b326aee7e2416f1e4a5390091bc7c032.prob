@@ -1,0 +1,1 @@
+{"name":"Local: 200101027HeapFLab","url":"/home/chandrabhushan/coding/cs246/lab10/200101027HeapFLab.cpp","tests":[{"id":1650274486267,"input":"50\n1 30 4\n1 20 2\n2\n3 2\n1 39 1\n3 1\n2\n4","output":"2 1 1\n1 0\n3 1 1 0"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/chandrabhushan/coding/cs246/lab10/200101027HeapFLab.cpp","group":"local","local":true}

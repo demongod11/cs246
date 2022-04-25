@@ -31,7 +31,7 @@ void external_sort(vector<vector<int>>& runs, int buffer){
     for (int i = 0; i < runs.size(); i++){
         sort(runs[i].begin(), runs[i].end());
     }
-    // Recusively merge the pages taking (buffer - 1) pages at a time
+    // Recursively merge the pages taking (buffer - 1) pages at a time
     while (runs.size() > 1){
         vector<vector<int>> sorted_runs, temp;
         int k = 0, i = 0;

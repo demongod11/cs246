@@ -27,6 +27,7 @@ bool page::insert_page(int rec_size,int n){
         return false;
     }
     records.push_back(n);
+    sort(records.begin(), records.end());
     directory.push_back(free_space_add);
     num_records++;
     free_space_add += rec_size;
@@ -85,13 +86,32 @@ bool heap_file::search(int n){
 bool heap_file::insert(int rec_size,int n){
     page* curr = head;
     page* last = nullptr;
+    vector<int> empt_space; 
     while(curr != nullptr){
-        last = curr;
+        empt_space.push_back(curr->empty_space);
+        curr = curr->next_page;
+    }
+    int temp_id=0;
+    if(empt_space.size()){
+        temp_id = max_element(empt_space.begin(), empt_space.end()) - empt_space.begin();
+    }
+    curr = head;
+    for(int j=0; j<temp_id; j++){
+        curr = curr->next_page;
+    }
+
+    if(curr != nullptr){
         if((curr->empty_space) >= (rec_size + 4)){
             return curr->insert_page(rec_size,n);
         }
+    }
+
+    curr = head;
+    while(curr != nullptr){
+        last = curr;
         curr = curr->next_page;
     }
+
     // if all pages cannot accomodate this entry
     //if this is first page
     num_pages++;
@@ -129,3 +149,4 @@ int main(){
         cin>>t;
     }
 }
+
